@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public class ProductManager {
     private Map<Product, List<Review>> products = new HashMap<>();
-    private ResourceFormatter formatter;
+//    private ResourceFormatter formatter;
     private ResourceBundle config = ResourceBundle.getBundle("config");
     private MessageFormat reviewFormat = new MessageFormat(config.getString("review.data.format"));
     private MessageFormat productFormat = new MessageFormat(config.getString("product.data.format"));
@@ -32,20 +32,24 @@ public class ProductManager {
             "ru-RU", new ResourceFormatter(new Locale("ru", "RU")),
             "zh-Ch", new ResourceFormatter(Locale.CHINA));
 
+    private static final ProductManager pm = new ProductManager();
+
     private static final Logger logger = Logger.getLogger(ProductManager.class.getName());
 
 
-    public ProductManager(Locale locale) {
-        this(locale.toLanguageTag());
-    }
+//    public ProductManager(Locale locale) {
+//        this(locale.toLanguageTag());
+//    }
 
-    public ProductManager(String languageTag) {
-        changeLocale(languageTag);
-    }
+    private ProductManager() { } // to make sure ProductManager is a singleton, it can't be run from other classes
+    // singleton is a design pattern that guarantees a creation of exactly one instance of a given class
 
-    public void changeLocale(String languageTag) {
+//    public void changeLocale(String languageTag) {
+//        formatter = formatters.getOrDefault(languageTag, formatters.get("en-GB"));
+//    }
 
-        formatter = formatters.getOrDefault(languageTag, formatters.get("en-GB"));
+    public static ProductManager getInstance() { // returns always the same instance of ProductManager
+        return pm;
     }
 
     public static Set<String> getSupportedLocales() {
@@ -101,15 +105,16 @@ public class ProductManager {
                 .orElseThrow(()-> new ProductManagementException("Product with id " + id + "not found"));
     }
 
-    public void printProductReport(int productId) {
+    public void printProductReport(int productId, String languageTag) {
         try {
-            printProductReport(findProduct(productId));
+            printProductReport(findProduct(productId), languageTag);
         }catch (ProductManagementException e){
-            logger.log(Level.INFO,e.getMessage());
+            logger.log(Level.INFO, e.getMessage());
         }
     }
 
-    public void printProductReport(Product product) {
+    public void printProductReport(Product product, String languageTag) {
+        ResourceFormatter formatter = formatters.getOrDefault(languageTag, formatters.get("en-GB"));
 
         List<Review> reviews = products.get(product);
         StringBuilder txt = new StringBuilder();
@@ -120,7 +125,6 @@ public class ProductManager {
         if (reviews.isEmpty()) {
             txt.append(formatter.getText("no.reviews") + '\n');
         } else {
-
             txt.append(reviews.stream().map(r -> formatter.formatReview(r) + '\n')
                     .collect(Collectors.joining()));
         }
@@ -128,8 +132,8 @@ public class ProductManager {
         System.out.println(txt);
     }
 
-    public void printProducts(Predicate<Product> filter, Comparator<Product> sorter) {
-
+    public void printProducts(Predicate<Product> filter, Comparator<Product> sorter, String languageTag) {
+        ResourceFormatter formatter = formatters.getOrDefault(languageTag, formatters.get("en-GB"));
         StringBuilder txt = new StringBuilder();
 
         txt.append( products
@@ -173,9 +177,9 @@ public class ProductManager {
         }
     }
 
-    public Map<String,String> getDiscount(){
-        return products
-                .keySet()
+    public Map<String,String> getDiscount(String languageTag) {
+        ResourceFormatter formatter = formatters.getOrDefault(languageTag, formatters.get("en-GB"));
+        return products.keySet()
                 .stream()
                 .collect(Collectors.groupingBy(
                         product -> product.getRating().getStars(),
