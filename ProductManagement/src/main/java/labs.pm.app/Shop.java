@@ -14,13 +14,13 @@ public class Shop {
     public static void main(String[] args) {
         ProductManager pm = ProductManager.getInstance(); //new ProductManager();
 
-        pm.parseProduct("D,101,Tea,1.99,0,2019-09-19");
-        pm.parseProduct("D,104,Coffee,2.99,0,2019-09-19");
+//        pm.parseProduct("D,101,Tea,1.99,0,2019-09-19");
+//        pm.parseProduct("D,104,Coffee,2.99,0,2019-09-19");
         //pm.CreateProduct(101, "Tea", BigDecimal.valueOf(1.99), Rating.NOT_RATED);
 
-        pm.printProductReport(101, "en-GB");
-        pm.printProductReport(104, "ru-RU");
-        pm.parseReview("101,4,Nice hot cup of tea");
+        pm.printProductReport(10, "ru-RU");
+        pm.printProductReport(14, "ru-RU");
+//        pm.parseReview("101,4,Nice hot cup of tea");
 
 /*
         //pm.printProductReport(101);

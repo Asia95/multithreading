@@ -1,0 +1,4 @@
+Tea, Price: £1.99, Rating: ★★★★☆, Best Before: 05/04/2021
+Review: ★★★★★	A Great cake
+Review: ★★★★☆	Nice hot cup of tea
+Review: ★★★★☆	Yet another review
